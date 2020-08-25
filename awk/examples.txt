@@ -1,0 +1,99 @@
+#Print decimal number as hex (prints 0x20):
+gawk 'BEGIN{printf "0x%x\n", 32}'
+
+# print section of file based on line numbers (lines 8-12, inclusive)
+gawk 'NR==8,NR==12' /etc/passwd
+
+#Sorted list of users
+gawk -F ':' '{ print $1 | "sort" }' /etc/passwd 
+
+gawk 'BEGIN {print "Hello, World!";}' 
+
+gawk '{print}' shoppingData.json 
+
+gawk '$0' shoppingData.json
+
+
+gawk '
+BEGIN { FS=":"; print "Name\tShell"} /^kent/ { printf "%s\t%s\n",$5, $7}' < /etc/passwd
+
+gawk '
+BEGIN { FS=":"; print "Name\tShell"} !/bash/ { printf "%s\t%s\n",$1, $7}' < /etc/passwd
+
+
+ls -l | gawk '
+BEGIN { print "File\tSize\tOwner"}
+{ printf "%s\t%d\t%s\n",$9, $5, $3}
+END { print " - DONE -" }
+
+ls -l | gawk '
+BEGIN { print "File\tSize\tOwner"}
+/^-/ { printf "%s\t%d\t%s\n",$9, $5, $3}
+END { print " - DONE -" }'
+
+ls -l | gawk '
+BEGIN { print "File\tSize\tOwner"}
+/^-/ || /^l/ { printf "%s\t%d\t%s\n",$9, $5, $3}
+END { print " - DONE -" }'
+
+ls -l | gawk '
+BEGIN { print "File\tSize\tOwner"}
+!/^.*total/ { printf "%s\t%d\t%s\n",$9, $5, $3}
+END { print " - DONE -" }'
+
+#bash version
+echo -e "File\tSize\tOwner"
+ls -l | egrep -s ‘^-’ | tr -s " " | cut -d' ' -f9,5,3
+echo " - DONE -"
+
+# bash version 2
+ echo -e "File\tSize\tOwner"
+
+ ls -l | egrep -s '^-' | tr -s " " |  while read -r c1 c2 c3 c4 c5 c6 c7 c8 c9
+    do
+       echo $c9 $c5 $c3
+   done
+echo " - DONE -"
+
+
+# print file double spaced
+gawk '1; { print "" }' examples.txt
+
+# custom line numbers
+gawk '{ printf("%5d : %s\n", NR, $0) }' types.awk
+
+#count lines containing pattern
+gawk '/if/ { n++ }; END { print n+0 }' shopTalk/shopPlot.awk
+
+#trim whitespace 
+gawk '{ gsub(/^[ \t]+|[ \t]+$/, ""); print }' types.awk
+
+
+#replace "foo" with "bar" on lines that contain "baz".
+gawk '/baz/ { gsub(/foo/, "bar") }; { print }'
+
+
+#Remove duplicate, nonconsecutive lines.
+gawk '!a[$0]++' examples.txt
+
+#Remove duplicate, nonconsecutive lines.
+#print the line before the matching line 
+gawk '/matching/ { print x }; { x=$0 }' examples.txt
+
+# handle the first line matching
+gawk '/matchine/ { print (x=="" ? "match on line 1" : x) }; { x=$0 }' examples.txt
+
+q -H  -d","  "SELECT item,store,price FROM shoppingDataExample/shoppingData.csv where item like '%milk%'"
+
+gawk -F"," '$3 ~ /.*Milk.*/ { print $3,$1,$4}' shoppingDataExample/shoppingData.csv
+
+
+jq "." < shoppingData.json 
+
+
+jq ".[].price" shoppingData.json 
+
+
+jq '.[] |  {store:.store,item:.item}' shoppingData.json
+
+jq '[.[] |  {store:.store,item:.item}]' shoppingData.json

@@ -1,0 +1,9 @@
+set term png truecolor
+set output "testPlot.png"
+set xlabel "Store"
+set ylabel "Spent"
+set title "Grocery Costs By Store"
+set grid
+set boxwidth 0.95 relative
+set style fill transparent solid 0.5 noborder
+plot "shopPlot.dat" using 2:xticlabels(1) with boxes lc rgb"green" notitle
